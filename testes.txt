@@ -1,0 +1,19 @@
+- FUNCIONA -
+{var := 3}  
+{var:=3}
+{var:=+3}
+
+{write 1 + 1 = 4}
+{write (1 + 1 = 4)}
+{write var1}
+{write 1 + var4}
+
+{if 1 + 1 = 2 then read var1 end}
+{if (1 + 1 = 2) then read var1 end}
+
+{repeat read var3 until var3 = 8}
+{foo := 10; repeat foo := foo - 1; write foo until 5 < foo}
+
+
+- NAO FUNCIONA -
+{write 1+1=4}
