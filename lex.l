@@ -1,11 +1,15 @@
+%option yylineno
+
 %{
   #include <stdio.h>
-  void yyeror(char *s);
   #include "y.tab.h"
+
+  void yyeror(char *s);
+  int col = 1;
 %}
 
-INTEIRO             [+-]?[1-9][0-9]*|0
-PONTO_FLUTUANTE     [+-]?[0-9]*[.][0-9]+
+INTEIRO             [1-9][0-9]*|0
+PONTO_FLUTUANTE     [0-9]*[.][0-9]+
 
 LETRA               [a-zA-Z]
 
@@ -15,6 +19,7 @@ COMENTARIO_LINHA    "//".*
 IDENTIFICADOR       ({LETRA})({LETRA}|[0-9]|_)*
 
 %%
+
 
 "read"                          {return LER;}
 "write"                         {return ESCREVER;}
@@ -37,20 +42,20 @@ IDENTIFICADOR       ({LETRA})({LETRA}|[0-9]|_)*
 "="                             {return IGUAL;}
 "<"                             {return MENOR;}
 
+{INTEIRO}                       {yylval.inteiro = atoi(yytext); return INTEIRO;}
 
-{INTEIRO}                       {/*printf("[Inteiro]\n");*/ return INTEIRO;}
+{PONTO_FLUTUANTE}               {yylval.pontoFlutuante = atof(yytext);return PONTO_FLUTUANTE;}
 
-{PONTO_FLUTUANTE}               {return PONTO_FLUTUANTE;}
+{LETRA}                         {yylval.letra = yytext;return LETRA;}
 
-{LETRA}                         {return LETRA;}
+{COMENTARIO_BLOCO}              {yylineno++; return COMENTARIO_BLOCO;}
+{COMENTARIO_LINHA}              {yylineno++; return COMENTARIO_LINHA;}
 
-{COMENTARIO_BLOCO}              {return COMENTARIO_BLOCO;}
-{COMENTARIO_LINHA}              {return COMENTARIO_LINHA;}
+{IDENTIFICADOR}                 {yylval.var = yytext;return IDENTIFICADOR;}
 
-{IDENTIFICADOR}                 {return IDENTIFICADOR;}
-
-[ \t]+			                    {;}
-.|\n				                    {return yytext[0];}
+[ \t\f\r]+                      {col+= yyleng;}
+\n                              {yylineno++; col=1;}
+.  				                      {return yytext[0];}
 
 %%
 
@@ -60,5 +65,6 @@ IDENTIFICADOR       ({LETRA})({LETRA}|[0-9]|_)*
 // }
 
 int yywrap(){
+
   return 1;
 }
