@@ -74,7 +74,8 @@ extern int yydebug;
     ADC = 275,                     /* ADC  */
     SUB = 276,                     /* SUB  */
     MENOR = 277,                   /* MENOR  */
-    IGUAL = 278                    /* IGUAL  */
+    IGUAL = 278,                   /* IGUAL  */
+    ENDOF = 279                    /* ENDOF  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -104,10 +105,23 @@ extern int yydebug;
 #define SUB 276
 #define MENOR 277
 #define IGUAL 278
+#define ENDOF 279
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+union YYSTYPE
+{
+#line 24 "sintatico.y"
+
+	int inteiro;
+	char* letra;
+	char* var;
+	double pontoFlutuante;
+
+#line 122 "y.tab.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
