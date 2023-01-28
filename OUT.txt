@@ -1,0 +1,79 @@
+Starting parse
+Entering state 0
+Stack now 0
+Reading a token
+Next token is token '{' ()
+Shifting token '{' ()
+Entering state 1
+Stack now 0 1
+Reading a token
+Next token is token ESCREVER ()
+Shifting token ESCREVER ()
+Entering state 4
+Stack now 0 1 4
+Reading a token
+Next token is token INTEIRO ()
+Shifting token INTEIRO ()
+Entering state 17
+Stack now 0 1 4 17
+Reducing stack by rule 25 (line 96):
+   $1 = token INTEIRO ()
+-> $$ = nterm fator ()
+Entering state 23
+Stack now 0 1 4 23
+Reducing stack by rule 23 (line 92):
+   $1 = nterm fator ()
+-> $$ = nterm termo ()
+Entering state 22
+Stack now 0 1 4 22
+Reading a token
+Next token is token '}' ()
+Reducing stack by rule 20 (line 86):
+   $1 = nterm termo ()
+-> $$ = nterm exp_simples ()
+Entering state 21
+Stack now 0 1 4 21
+Next token is token '}' ()
+Reducing stack by rule 17 (line 81):
+   $1 = nterm exp_simples ()
+-> $$ = nterm exp ()
+Entering state 20
+Stack now 0 1 4 20
+Reducing stack by rule 10 (line 64):
+   $1 = token ESCREVER ()
+   $2 = nterm exp ()
+-> $$ = nterm cmd_escrever ()
+Entering state 11
+Stack now 0 1 11
+Reducing stack by rule 5 (line 55):
+   $1 = nterm cmd_escrever ()
+-> $$ = nterm cmd ()
+Entering state 9
+Stack now 0 1 9
+Next token is token '}' ()
+Reducing stack by rule 2 (line 50):
+   $1 = nterm cmd ()
+-> $$ = nterm lista_cmds ()
+Entering state 8
+Stack now 0 1 8
+Next token is token '}' ()
+Shifting token '}' ()
+Entering state 27
+Stack now 0 1 8 27
+Reducing stack by rule 1 (line 45):
+   $1 = token '{' ()
+   $2 = nterm lista_cmds ()
+   $3 = token '}' ()
+
+Programa sintaticamente correto.
+-> $$ = nterm programa ()
+Entering state 2
+Stack now 0 2
+Reading a token
+Now at end of input.
+Shifting token "end of file" ()
+Entering state 15
+Stack now 0 2 15
+Stack now 0 2 15
+Cleanup: popping token "end of file" ()
+Cleanup: popping nterm programa ()
