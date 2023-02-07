@@ -11,12 +11,10 @@
 INTEIRO             [1-9][0-9]*|0
 PONTO_FLUTUANTE     [0-9]*[.][0-9]+
 
-LETRA               [a-zA-Z]
-
 COMENTARIO_BLOCO    "/*"([^*]|\*+[^*/])*\*+"/"
 COMENTARIO_LINHA    "//".*
 
-IDENTIFICADOR       ({LETRA})({LETRA}|[0-9]|_)*
+IDENTIFICADOR       ([a-zA-Z])([a-zA-Z]|[0-9]|_)*
 
 %%
 
@@ -45,8 +43,6 @@ IDENTIFICADOR       ({LETRA})({LETRA}|[0-9]|_)*
 {INTEIRO}                       {yylval.inteiro = atoi(yytext); return INTEIRO;}
 
 {PONTO_FLUTUANTE}               {yylval.pontoFlutuante = atof(yytext);return PONTO_FLUTUANTE;}
-
-{LETRA}                         {yylval.letra = yytext;return LETRA;}
 
 {COMENTARIO_BLOCO}              {yylineno++; return COMENTARIO_BLOCO;}
 {COMENTARIO_LINHA}              {yylineno++; return COMENTARIO_LINHA;}

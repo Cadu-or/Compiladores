@@ -57,25 +57,23 @@ extern int yydebug;
     INTEIRO = 258,                 /* INTEIRO  */
     IDENTIFICADOR = 259,           /* IDENTIFICADOR  */
     PONTO_FLUTUANTE = 260,         /* PONTO_FLUTUANTE  */
-    LETRA = 261,                   /* LETRA  */
-    COMENTARIO_BLOCO = 262,        /* COMENTARIO_BLOCO  */
-    COMENTARIO_LINHA = 263,        /* COMENTARIO_LINHA  */
-    ESCREVER = 264,                /* ESCREVER  */
-    LER = 265,                     /* LER  */
-    REPEAT = 266,                  /* REPEAT  */
-    UNTIL = 267,                   /* UNTIL  */
-    THEN = 268,                    /* THEN  */
-    IF = 269,                      /* IF  */
-    ELSE = 270,                    /* ELSE  */
-    END = 271,                     /* END  */
-    DECLARACAO = 272,              /* DECLARACAO  */
-    MULT = 273,                    /* MULT  */
-    DIV = 274,                     /* DIV  */
-    ADC = 275,                     /* ADC  */
-    SUB = 276,                     /* SUB  */
-    MENOR = 277,                   /* MENOR  */
-    IGUAL = 278,                   /* IGUAL  */
-    ENDOF = 279                    /* ENDOF  */
+    COMENTARIO_BLOCO = 261,        /* COMENTARIO_BLOCO  */
+    COMENTARIO_LINHA = 262,        /* COMENTARIO_LINHA  */
+    ESCREVER = 263,                /* ESCREVER  */
+    LER = 264,                     /* LER  */
+    REPEAT = 265,                  /* REPEAT  */
+    UNTIL = 266,                   /* UNTIL  */
+    THEN = 267,                    /* THEN  */
+    IF = 268,                      /* IF  */
+    ELSE = 269,                    /* ELSE  */
+    END = 270,                     /* END  */
+    DECLARACAO = 271,              /* DECLARACAO  */
+    MULT = 272,                    /* MULT  */
+    DIV = 273,                     /* DIV  */
+    ADC = 274,                     /* ADC  */
+    SUB = 275,                     /* SUB  */
+    MENOR = 276,                   /* MENOR  */
+    IGUAL = 277                    /* IGUAL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -87,38 +85,35 @@ extern int yydebug;
 #define INTEIRO 258
 #define IDENTIFICADOR 259
 #define PONTO_FLUTUANTE 260
-#define LETRA 261
-#define COMENTARIO_BLOCO 262
-#define COMENTARIO_LINHA 263
-#define ESCREVER 264
-#define LER 265
-#define REPEAT 266
-#define UNTIL 267
-#define THEN 268
-#define IF 269
-#define ELSE 270
-#define END 271
-#define DECLARACAO 272
-#define MULT 273
-#define DIV 274
-#define ADC 275
-#define SUB 276
-#define MENOR 277
-#define IGUAL 278
-#define ENDOF 279
+#define COMENTARIO_BLOCO 261
+#define COMENTARIO_LINHA 262
+#define ESCREVER 263
+#define LER 264
+#define REPEAT 265
+#define UNTIL 266
+#define THEN 267
+#define IF 268
+#define ELSE 269
+#define END 270
+#define DECLARACAO 271
+#define MULT 272
+#define DIV 273
+#define ADC 274
+#define SUB 275
+#define MENOR 276
+#define IGUAL 277
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 24 "sintatico.y"
+#line 27 "sintatico.y"
 
 	int inteiro;
-	char* letra;
 	char* var;
 	double pontoFlutuante;
 
-#line 122 "y.tab.h"
+#line 117 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

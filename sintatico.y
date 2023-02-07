@@ -1,7 +1,8 @@
 /* Verificando a sintaxe de programas segundo nossa GLC-exemplo */
 /* considerando notacao polonesa para expressoes */
 %{
-	#include <stdio.h>
+	#include "Semantico.h"
+
 	#define YYDEBUG 1
 	#define ac 0
 	#define mp 6
@@ -14,6 +15,8 @@
 
 	static int emitLoc = 0 ;
 	static int highEmitLoc = 0;
+
+	static char * variavel;
 	
 	void yyerror(char *s);
 	int yylex(void);
@@ -23,7 +26,6 @@
 
 %union{
 	int inteiro;
-	char* letra;
 	char* var;
 	double pontoFlutuante;
 }
@@ -31,11 +33,10 @@
 %token <inteiro> INTEIRO
 %token <var> IDENTIFICADOR
 %token <pontoFlutuante> PONTO_FLUTUANTE
-%token <letra> LETRA
 %token COMENTARIO_BLOCO
 %token COMENTARIO_LINHA
 %token ESCREVER
-%token LER
+%token <var> LER
 %token REPEAT
 %token UNTIL
 %token THEN
@@ -48,18 +49,10 @@
 
 %%
 
-input:    /* empty */
-        | input line
-;
-
-line:     '\n'
-        | programa '\n'											{printf ("Programa sintaticamente correto!\n");}
-;
-
 programa: '{' lista_cmds '}'{
-		// printf("\nPrograma sintaticamente correto.\n");	
-						;
-					}
+							printf("\nPrograma sintaticamente correto.\n");
+							verifica_semantico();
+						}
 ;
 
 lista_cmds:		cmd															{;}
@@ -73,15 +66,32 @@ cmd:	cmd_associacao													{;}
 		| cmd_condicao														{;}
 ;
 
-cmd_associacao: IDENTIFICADOR DECLARACAO exp										{;}
+cmd_associacao: IDENTIFICADOR {
+									// printf("%s\n", $1);
+									variavel = (char*)malloc(20);
+									strcpy(variavel, $1); 
+								}
+								DECLARACAO exp {
+									// printf("variavel: %s\n",variavel);
+									TS* aux = criar_no();
+									aux = procurar_no(variavel);
+									if(aux == NULL) {
+										inserir(variavel, "inteiro", $<inteiro>4);
+									}else{
+										aux->valor = $<inteiro>4;
+									}
+								}
 ;
 
 cmd_escrever: ESCREVER exp{
+		emitRM("LDC",ac,$<inteiro>2,0,"load const");
 		emitRO("OUT",ac,0,0,"write ac");
 	}
 ;
 
-cmd_ler: LER IDENTIFICADOR                   										{;}
+cmd_ler: LER IDENTIFICADOR{
+	inserir($2, "inteiro", 0);
+}
 ;
 
 cmd_condicao:  	IF exp THEN lista_cmds END 										 	{;}
@@ -93,27 +103,50 @@ cmd_repeticao: REPEAT lista_cmds UNTIL exp 											{;}
 
 exp:	exp_simples	IGUAL exp_simples															{;}
 		| exp_simples MENOR exp_simples															{;}
-		|	exp_simples													  										{;}
+		|	exp_simples	{
+				$<inteiro>$ = $<inteiro>1;
+			}
 ;
 
-exp_simples: 	exp_simples ADC termo 														{;}
-						| exp_simples SUB termo 														{;}
-			 			| termo 																						{;}
+exp_simples: 	exp_simples ADC termo {
+								$<inteiro>$ = $<inteiro>1 + $<inteiro>3;
+							}
+						| exp_simples SUB termo	{
+								$<inteiro>$ = $<inteiro>1 - $<inteiro>3;
+							}
+			 			| termo	{
+								$<inteiro>$ = $<inteiro>1;
+							}
 ;
 
 
-termo:  termo MULT fator 																				{;}
-			| termo DIV fator																					{;}
-			| fator 																									{;}
+termo:  termo MULT fator	{
+					$<inteiro>$ = $<inteiro>1 * $<inteiro>3;
+				}
+			| termo DIV fator		{
+					$<inteiro>$ = $<inteiro>1 / $<inteiro>3;
+				}
+			| fator {
+					$<inteiro>$ = $<inteiro>1;
+				}
 ;
 
 fator: '(' exp ')' 																							{;} 
 			| INTEIRO	{
-					printf("Linha: %d\n", yylineno);
-					emitRM("LDC",ac,$1,0,"load const");
+					$<inteiro>$ = $1;
 				}
 			| IDENTIFICADOR {
-					printf("%s\n", $1);
+					TS* aux = criar_no();
+					aux = procurar_no($1);
+					if(aux != NULL){
+						aux->usado = 1;
+						$<inteiro>$ = aux->valor;
+					}
+					else{
+						ERRO++;
+						print_erro(1);
+					}
+
 				}
 			| PONTO_FLUTUANTE {
 					printf("%.3lf\n", $1);
@@ -137,7 +170,7 @@ void yyerror(char *s){
 }
 
 int main(int argc, char** argv){
-
+	//yydebug = 1;
 	if(argc > 0){
 		yyin = fopen(argv[1],"rt");
 	}else{
@@ -149,16 +182,17 @@ int main(int argc, char** argv){
 	}else{
 		yyout = stdout;
 	}
-
+	 
 	emitRM("LD",mp,0,ac,"load maxaddress from location 0");
 	emitRM("ST",ac,0,ac,"clear location 0");
-	yydebug = 1;
 	yyparse();
 
+	print_lista();
 	emitRO("HALT",0,0,0,"");
 
 	fclose(yyin);
 	fclose(yyout);
+	clear_lista();
 
 
 	return 0;
