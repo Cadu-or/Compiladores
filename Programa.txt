@@ -1,4 +1,0 @@
-{
-  write 4;
-  write 5
-}
