@@ -1,6 +1,6 @@
 {
-  read w;
-  y := 4;
-  x := 5;
-  z := 3
+  read x;
+  read y;
+  write x;
+  write y;
 }

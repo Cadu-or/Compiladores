@@ -83,15 +83,17 @@
 
 	static int emitLoc = 0 ;
 	static int highEmitLoc = 0;
-
+	static int locmem = 0;
 	static char * variavel;
 	
 	void yyerror(char *s);
 	int yylex(void);
-	void emitRO(char *op, int r, int s, int t, char *c);
-	void emitRM( char * op, int r, int d, int s, char *c);
 
-#line 95 "y.tab.c"
+	void emitRO(char *op, int r, int s, int t, char *c);
+	void emitRM(char *op, int r, int d, int s, char *c);
+	void emitRR(char *op, int r, int s, int t, char *c);
+
+#line 97 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -188,13 +190,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 27 "sintatico.y"
+#line 29 "sintatico.y"
 
 	int inteiro;
 	char* var;
 	double pontoFlutuante;
 
-#line 198 "y.tab.c"
+#line 200 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -247,15 +249,14 @@ enum yysymbol_kind_t
   YYSYMBOL_lista_cmds = 30,                /* lista_cmds  */
   YYSYMBOL_cmd = 31,                       /* cmd  */
   YYSYMBOL_cmd_associacao = 32,            /* cmd_associacao  */
-  YYSYMBOL_33_1 = 33,                      /* $@1  */
-  YYSYMBOL_cmd_escrever = 34,              /* cmd_escrever  */
-  YYSYMBOL_cmd_ler = 35,                   /* cmd_ler  */
-  YYSYMBOL_cmd_condicao = 36,              /* cmd_condicao  */
-  YYSYMBOL_cmd_repeticao = 37,             /* cmd_repeticao  */
-  YYSYMBOL_exp = 38,                       /* exp  */
-  YYSYMBOL_exp_simples = 39,               /* exp_simples  */
-  YYSYMBOL_termo = 40,                     /* termo  */
-  YYSYMBOL_fator = 41                      /* fator  */
+  YYSYMBOL_cmd_escrever = 33,              /* cmd_escrever  */
+  YYSYMBOL_cmd_ler = 34,                   /* cmd_ler  */
+  YYSYMBOL_cmd_condicao = 35,              /* cmd_condicao  */
+  YYSYMBOL_cmd_repeticao = 36,             /* cmd_repeticao  */
+  YYSYMBOL_exp = 37,                       /* exp  */
+  YYSYMBOL_exp_simples = 38,               /* exp_simples  */
+  YYSYMBOL_termo = 39,                     /* termo  */
+  YYSYMBOL_fator = 40                      /* fator  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -583,16 +584,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  15
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   45
+#define YYLAST   44
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  28
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  14
+#define YYNNTS  13
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  29
+#define YYNRULES  28
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  55
+#define YYNSTATES  54
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   277
@@ -643,9 +644,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    52,    52,    58,    59,    62,    63,    64,    65,    66,
-      69,    69,    86,    92,    99,   100,   103,   106,   107,   108,
-     113,   116,   119,   125,   128,   131,   136,   137,   140,   153
+       0,    54,    54,    60,    61,    64,    65,    66,    67,    68,
+      71,    97,   114,   124,   125,   128,   131,   132,   133,   138,
+     160,   163,   169,   172,   178,   183,   184,   188,   204
 };
 #endif
 
@@ -666,7 +667,7 @@ static const char *const yytname[] =
   "COMENTARIO_LINHA", "ESCREVER", "LER", "REPEAT", "UNTIL", "THEN", "IF",
   "ELSE", "END", "DECLARACAO", "MULT", "DIV", "ADC", "SUB", "MENOR",
   "IGUAL", "'{'", "'}'", "';'", "'('", "')'", "$accept", "programa",
-  "lista_cmds", "cmd", "cmd_associacao", "$@1", "cmd_escrever", "cmd_ler",
+  "lista_cmds", "cmd", "cmd_associacao", "cmd_escrever", "cmd_ler",
   "cmd_condicao", "cmd_repeticao", "exp", "exp_simples", "termo", "fator", YY_NULLPTR
 };
 
@@ -677,7 +678,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-17)
+#define YYPACT_NINF (-25)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -691,12 +692,12 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -12,     4,     7,   -17,     1,    11,     4,     1,    -2,     6,
-     -17,   -17,   -17,   -17,   -17,   -17,    12,   -17,   -17,   -17,
-       1,   -17,    -1,   -16,   -17,   -17,    21,    25,   -17,     4,
-       1,    13,     1,     1,     1,     1,     1,     1,     1,     4,
-     -17,   -17,   -17,   -16,   -16,   -10,   -10,   -17,   -17,   -17,
-      10,     4,   -17,    26,   -17
+       3,     5,    17,    12,     1,    31,     5,     1,    13,    11,
+     -25,   -25,   -25,   -25,   -25,   -25,     1,   -25,   -25,   -25,
+       1,   -25,     0,   -16,   -25,   -25,    27,    28,   -25,     5,
+     -25,    14,     1,     1,     1,     1,     1,     1,     1,     5,
+     -25,   -25,   -16,   -16,   -12,   -12,   -25,   -25,   -25,    10,
+       5,   -25,    24,   -25
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -704,26 +705,26 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     0,     0,    10,     0,     0,     0,     0,     0,     3,
-       5,     6,     7,     9,     8,     1,     0,    27,    28,    29,
-       0,    12,    19,    22,    25,    13,     0,     0,     2,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       4,    11,    26,    20,    21,    18,    17,    23,    24,    16,
-       0,     0,    14,     0,    15
+       5,     6,     7,     9,     8,     1,     0,    26,    27,    28,
+       0,    11,    18,    21,    24,    12,     0,     0,     2,     3,
+      10,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       4,    25,    19,    20,    17,    16,    22,    23,    15,     0,
+       0,    13,     0,    14
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -17,   -17,    -6,   -17,   -17,   -17,   -17,   -17,   -17,   -17,
-      -4,    -5,     3,     2
+     -25,   -25,    -6,   -25,   -25,   -25,   -25,   -25,   -25,    -4,
+     -24,    -3,    -5
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     2,     8,     9,    10,    16,    11,    12,    13,    14,
-      21,    22,    23,    24
+       0,     2,     8,     9,    10,    11,    12,    13,    14,    21,
+      22,    23,    24
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -731,20 +732,20 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      26,    36,    37,    27,    17,    18,    19,    15,     3,    32,
-      33,     1,     4,     5,     6,    25,    31,     7,    32,    33,
-      34,    35,    28,    40,    51,    52,    41,    20,    30,    45,
-      46,    29,    38,    50,    49,    43,    44,    39,    47,    48,
-      42,    54,     0,     0,     0,    53
+      26,    36,    37,    27,    17,    18,    19,    32,    33,     3,
+      44,    45,    30,     4,     5,     6,    31,    15,     7,    32,
+      33,    34,    35,    40,    50,    51,     1,    20,    16,    42,
+      43,    46,    47,    49,    48,    25,    29,    28,    38,    53,
+      39,    41,     0,     0,    52
 };
 
 static const yytype_int8 yycheck[] =
 {
-       6,    17,    18,     7,     3,     4,     5,     0,     4,    19,
-      20,    23,     8,     9,    10,     4,    20,    13,    19,    20,
-      21,    22,    24,    29,    14,    15,    30,    26,    16,    34,
-      35,    25,    11,    39,    38,    32,    33,    12,    36,    37,
-      27,    15,    -1,    -1,    -1,    51
+       6,    17,    18,     7,     3,     4,     5,    19,    20,     4,
+      34,    35,    16,     8,     9,    10,    20,     0,    13,    19,
+      20,    21,    22,    29,    14,    15,    23,    26,    16,    32,
+      33,    36,    37,    39,    38,     4,    25,    24,    11,    15,
+      12,    27,    -1,    -1,    50
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -752,27 +753,27 @@ static const yytype_int8 yycheck[] =
 static const yytype_int8 yystos[] =
 {
        0,    23,    29,     4,     8,     9,    10,    13,    30,    31,
-      32,    34,    35,    36,    37,     0,    33,     3,     4,     5,
-      26,    38,    39,    40,    41,     4,    30,    38,    24,    25,
-      16,    38,    19,    20,    21,    22,    17,    18,    11,    12,
-      30,    38,    27,    40,    40,    39,    39,    41,    41,    38,
-      30,    14,    15,    30,    15
+      32,    33,    34,    35,    36,     0,    16,     3,     4,     5,
+      26,    37,    38,    39,    40,     4,    30,    37,    24,    25,
+      37,    37,    19,    20,    21,    22,    17,    18,    11,    12,
+      30,    27,    39,    39,    38,    38,    40,    40,    37,    30,
+      14,    15,    30,    15
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
        0,    28,    29,    30,    30,    31,    31,    31,    31,    31,
-      33,    32,    34,    35,    36,    36,    37,    38,    38,    38,
-      39,    39,    39,    40,    40,    40,    41,    41,    41,    41
+      32,    33,    34,    35,    35,    36,    37,    37,    37,    38,
+      38,    38,    39,    39,    39,    40,    40,    40,    40
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     3,     1,     3,     1,     1,     1,     1,     1,
-       0,     4,     2,     2,     5,     7,     4,     3,     3,     1,
-       3,     3,     1,     3,     3,     1,     3,     1,     1,     1
+       0,     2,     3,     2,     3,     1,     1,     1,     1,     1,
+       3,     2,     2,     5,     7,     4,     3,     3,     1,     3,
+       3,     1,     3,     3,     1,     3,     1,     1,     1
 };
 
 
@@ -1236,228 +1237,272 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* programa: '{' lista_cmds '}'  */
-#line 52 "sintatico.y"
+#line 54 "sintatico.y"
                             {
 							printf("\nPrograma sintaticamente correto.\n");
 							verifica_semantico();
 						}
-#line 1245 "y.tab.c"
+#line 1246 "y.tab.c"
     break;
 
-  case 3: /* lista_cmds: cmd  */
-#line 58 "sintatico.y"
+  case 3: /* lista_cmds: cmd ';'  */
+#line 60 "sintatico.y"
                                                                                                                                                 {;}
-#line 1251 "y.tab.c"
+#line 1252 "y.tab.c"
     break;
 
   case 4: /* lista_cmds: cmd ';' lista_cmds  */
-#line 59 "sintatico.y"
+#line 61 "sintatico.y"
                                                                                                                         {;}
-#line 1257 "y.tab.c"
+#line 1258 "y.tab.c"
     break;
 
   case 5: /* cmd: cmd_associacao  */
-#line 62 "sintatico.y"
+#line 64 "sintatico.y"
                                                                                                                         {;}
-#line 1263 "y.tab.c"
+#line 1264 "y.tab.c"
     break;
 
   case 6: /* cmd: cmd_escrever  */
-#line 63 "sintatico.y"
+#line 65 "sintatico.y"
                                                                                                                                                 {;}
-#line 1269 "y.tab.c"
+#line 1270 "y.tab.c"
     break;
 
   case 7: /* cmd: cmd_ler  */
-#line 64 "sintatico.y"
+#line 66 "sintatico.y"
                                                                                                                                                                 {;}
-#line 1275 "y.tab.c"
+#line 1276 "y.tab.c"
     break;
 
   case 8: /* cmd: cmd_repeticao  */
-#line 65 "sintatico.y"
+#line 67 "sintatico.y"
                                                                                                                                         {;}
-#line 1281 "y.tab.c"
+#line 1282 "y.tab.c"
     break;
 
   case 9: /* cmd: cmd_condicao  */
-#line 66 "sintatico.y"
+#line 68 "sintatico.y"
                                                                                                                                         {;}
-#line 1287 "y.tab.c"
+#line 1288 "y.tab.c"
     break;
 
-  case 10: /* $@1: %empty  */
-#line 69 "sintatico.y"
-                              {
-									// printf("%s\n", $1);
-									variavel = (char*)malloc(20);
-									strcpy(variavel, (yyvsp[0].var)); 
-								}
-#line 1297 "y.tab.c"
-    break;
-
-  case 11: /* cmd_associacao: IDENTIFICADOR $@1 DECLARACAO exp  */
-#line 74 "sintatico.y"
-                                                                               {
+  case 10: /* cmd_associacao: IDENTIFICADOR DECLARACAO exp  */
+#line 71 "sintatico.y"
+                                             {
 									// printf("variavel: %s\n",variavel);
+									variavel = (char*) malloc(20 * sizeof(char));
+									GetName((yyvsp[-2].var),variavel);
+									printf("%s\n",variavel);
 									TS* aux = criar_no();
 									aux = procurar_no(variavel);
 									if(aux == NULL) {
-										inserir(variavel, "inteiro", (yyvsp[0].inteiro));
-									}else{
-										aux->valor = (yyvsp[0].inteiro);
+										aux = inserir(variavel, "inteiro", locmem++);	
+									}
+									if(!strcmp((yyvsp[0].var),"const")){
+										emitRM("ST", ac, aux->mem_loc, 5,"store exp in mem(0+aux->mem_loc)");
+									}
+									else{
+										TS* aux1 = criar_no();
+										aux1 = procurar_no((yyvsp[0].var));
+										if(aux1 != NULL)
+											emitRM("ST", aux1->mem_loc,aux->mem_loc,5,"store aux1 value in mem(0+ reg(aux->mem_loc))");
+										else{
+											ERRO++;
+											print_erro(1);
+										}
 									}
 								}
-#line 1312 "y.tab.c"
+#line 1317 "y.tab.c"
     break;
 
-  case 12: /* cmd_escrever: ESCREVER exp  */
-#line 86 "sintatico.y"
+  case 11: /* cmd_escrever: ESCREVER exp  */
+#line 97 "sintatico.y"
                           {
-		emitRM("LDC",ac,(yyvsp[0].inteiro),0,"load const");
-		emitRO("OUT",ac,0,0,"write ac");
+		if(!strcmp((yyvsp[0].var),"const"))
+			emitRO("OUT",ac,0,0,"write ac");
+		else{
+			TS* aux = criar_no();
+			aux = procurar_no((yyvsp[0].var));
+			if(aux != NULL){
+				emitRO("OUT", ac,0,0,"write aux->mem_loc (ac)");
+			}
+			else{
+				ERRO++;
+				print_erro(1);
+			}
+		}
 	}
-#line 1321 "y.tab.c"
-    break;
-
-  case 13: /* cmd_ler: LER IDENTIFICADOR  */
-#line 92 "sintatico.y"
-                          {
-	variavel = (char*)malloc(20);
-	strcpy(variavel, (yyvsp[0].var)); 
-	inserir((yyvsp[0].var), "inteiro", 0);
-}
-#line 1331 "y.tab.c"
-    break;
-
-  case 14: /* cmd_condicao: IF exp THEN lista_cmds END  */
-#line 99 "sintatico.y"
-                                                                                                                                {;}
 #line 1337 "y.tab.c"
     break;
 
-  case 15: /* cmd_condicao: IF exp THEN lista_cmds ELSE lista_cmds END  */
-#line 100 "sintatico.y"
-                                                                                                                {;}
-#line 1343 "y.tab.c"
+  case 12: /* cmd_ler: LER IDENTIFICADOR  */
+#line 114 "sintatico.y"
+                          {
+	emitRO("IN",ac,0,0,"read");
+	char nome[20];
+	GetName((yyvsp[0].var),nome);
+	inserir(nome, "inteiro", locmem);
+	emitRM("ST",ac,locmem,5,"read store");
+	locmem++;
+}
+#line 1350 "y.tab.c"
     break;
 
-  case 16: /* cmd_repeticao: REPEAT lista_cmds UNTIL exp  */
-#line 103 "sintatico.y"
+  case 13: /* cmd_condicao: IF exp THEN lista_cmds END  */
+#line 124 "sintatico.y"
                                                                                                                                 {;}
-#line 1349 "y.tab.c"
+#line 1356 "y.tab.c"
     break;
 
-  case 17: /* exp: exp_simples IGUAL exp_simples  */
-#line 106 "sintatico.y"
-                                                                                                                                                                {;}
-#line 1355 "y.tab.c"
-    break;
-
-  case 18: /* exp: exp_simples MENOR exp_simples  */
-#line 107 "sintatico.y"
-                                                                                                                                                                {;}
-#line 1361 "y.tab.c"
-    break;
-
-  case 19: /* exp: exp_simples  */
-#line 108 "sintatico.y"
-                                        {
-				(yyval.inteiro) = (yyvsp[0].inteiro);
-			}
-#line 1369 "y.tab.c"
-    break;
-
-  case 20: /* exp_simples: exp_simples ADC termo  */
-#line 113 "sintatico.y"
-                                      {
-								(yyval.inteiro) = (yyvsp[-2].inteiro) + (yyvsp[0].inteiro);
-							}
-#line 1377 "y.tab.c"
-    break;
-
-  case 21: /* exp_simples: exp_simples SUB termo  */
-#line 116 "sintatico.y"
-                                                                        {
-								(yyval.inteiro) = (yyvsp[-2].inteiro) - (yyvsp[0].inteiro);
-							}
-#line 1385 "y.tab.c"
-    break;
-
-  case 22: /* exp_simples: termo  */
-#line 119 "sintatico.y"
-                                                        {
-								(yyval.inteiro) = (yyvsp[0].inteiro);
-							}
-#line 1393 "y.tab.c"
-    break;
-
-  case 23: /* termo: termo MULT fator  */
+  case 14: /* cmd_condicao: IF exp THEN lista_cmds ELSE lista_cmds END  */
 #line 125 "sintatico.y"
-                                {
-					(yyval.inteiro) = (yyvsp[-2].inteiro) * (yyvsp[0].inteiro);
-				}
-#line 1401 "y.tab.c"
+                                                                                                                {;}
+#line 1362 "y.tab.c"
     break;
 
-  case 24: /* termo: termo DIV fator  */
+  case 15: /* cmd_repeticao: REPEAT lista_cmds UNTIL exp  */
 #line 128 "sintatico.y"
-                                                        {
-					(yyval.inteiro) = (yyvsp[-2].inteiro) / (yyvsp[0].inteiro);
-				}
-#line 1409 "y.tab.c"
+                                                                                                                                {;}
+#line 1368 "y.tab.c"
     break;
 
-  case 25: /* termo: fator  */
+  case 16: /* exp: exp_simples IGUAL exp_simples  */
 #line 131 "sintatico.y"
-                                {
-					(yyval.inteiro) = (yyvsp[0].inteiro);
-				}
-#line 1417 "y.tab.c"
+                                                                                                                                                                {;}
+#line 1374 "y.tab.c"
     break;
 
-  case 26: /* fator: '(' exp ')'  */
-#line 136 "sintatico.y"
-                                                                                                                                                                                                        {;}
+  case 17: /* exp: exp_simples MENOR exp_simples  */
+#line 132 "sintatico.y"
+                                                                                                                                                                {;}
+#line 1380 "y.tab.c"
+    break;
+
+  case 18: /* exp: exp_simples  */
+#line 133 "sintatico.y"
+                                        {
+				(yyval.var) = (yyvsp[0].var);
+			}
+#line 1388 "y.tab.c"
+    break;
+
+  case 19: /* exp_simples: exp_simples ADC termo  */
+#line 138 "sintatico.y"
+                                      {
+								TS* aux = criar_no(), *aux1 = criar_no();
+
+								if(!strcmp((yyvsp[-2].var),"const") && !strcmp((yyvsp[0].var),"const")){
+									//emitRR("ADD", ac, $<inteiro>1,$<inteiro>3, "r = s + t");
+								}
+
+								else if(strcmp((yyvsp[-2].var),"const") && !strcmp((yyvsp[0].var),"const")){
+									if((aux = procurar_no((yyvsp[-2].var))) != NULL)
+										emitRR("ADD", ac, aux->mem_loc, ac, "r = s + t");
+								}
+								
+								else if(!strcmp((yyvsp[-2].var),"const") && strcmp((yyvsp[0].var),"const")){
+									if((aux = procurar_no((yyvsp[0].var))) != NULL)
+										emitRR("ADD", ac, ac,(yyvsp[0].inteiro), "r = s + t");
+								}
+
+								else if(strcmp((yyvsp[-2].var),"const") && strcmp((yyvsp[0].var),"const")){
+									if((aux = procurar_no((yyvsp[-2].var))) != NULL && (aux1 = procurar_no((yyvsp[0].var))) != NULL)
+										emitRR("ADD", ac, aux->mem_loc,aux1->mem_loc, "r = s + t");
+								}
+							}
+#line 1415 "y.tab.c"
+    break;
+
+  case 20: /* exp_simples: exp_simples SUB termo  */
+#line 160 "sintatico.y"
+                                                                        {
+								emitRR("SUB", ac,(yyvsp[-2].inteiro), (yyvsp[0].inteiro), "r = s - t");
+							}
 #line 1423 "y.tab.c"
     break;
 
-  case 27: /* fator: INTEIRO  */
-#line 137 "sintatico.y"
-                                        {
-					(yyval.inteiro) = (yyvsp[0].inteiro);
-				}
+  case 21: /* exp_simples: termo  */
+#line 163 "sintatico.y"
+                                                        {
+								(yyval.var) = (yyvsp[0].var);
+							}
 #line 1431 "y.tab.c"
     break;
 
-  case 28: /* fator: IDENTIFICADOR  */
-#line 140 "sintatico.y"
+  case 22: /* termo: termo MULT fator  */
+#line 169 "sintatico.y"
+                                {
+					emitRR("MUL", ac, (yyvsp[-2].inteiro), (yyvsp[0].inteiro)," r = s * t");
+				}
+#line 1439 "y.tab.c"
+    break;
+
+  case 23: /* termo: termo DIV fator  */
+#line 172 "sintatico.y"
+                                                        {
+					if((yyvsp[0].inteiro) != 0)
+						emitRR("DIV", ac, (yyvsp[-2].inteiro), (yyvsp[0].inteiro),"r = s / t");
+					else
+						print_erro(2);
+				}
+#line 1450 "y.tab.c"
+    break;
+
+  case 24: /* termo: fator  */
+#line 178 "sintatico.y"
+                                {
+					(yyval.var) = (yyvsp[0].var);
+				}
+#line 1458 "y.tab.c"
+    break;
+
+  case 25: /* fator: '(' exp ')'  */
+#line 183 "sintatico.y"
+                                                                                                                                                                                                        {;}
+#line 1464 "y.tab.c"
+    break;
+
+  case 26: /* fator: INTEIRO  */
+#line 184 "sintatico.y"
+                                        {
+					emitRM("LDC",ac,(yyvsp[0].inteiro),0,"load const");
+					(yyval.var) = "const";
+				}
+#line 1473 "y.tab.c"
+    break;
+
+  case 27: /* fator: IDENTIFICADOR  */
+#line 188 "sintatico.y"
                                         {
 					TS* aux = criar_no();
 					aux = procurar_no((yyvsp[0].var));
 					if(aux != NULL){
 						aux->usado = 1;
-						(yyval.inteiro) = aux->valor;
+						emitRM("LD", ac, aux->mem_loc,5,"load contents of aux->mem_loc in ac");
 					}
 					else{
-						ERRO++;
+						incrementaERRO();
+						printf("%s - ", (yyvsp[0].var));
 						print_erro(1);
 					}
-
+					char nome[20];
+					GetName((yyvsp[0].var), nome);
+					(yyval.var) = nome;
 				}
-#line 1449 "y.tab.c"
+#line 1494 "y.tab.c"
     break;
 
-  case 29: /* fator: PONTO_FLUTUANTE  */
-#line 153 "sintatico.y"
+  case 28: /* fator: PONTO_FLUTUANTE  */
+#line 204 "sintatico.y"
                                           {
 					printf("%.3lf\n", (yyvsp[0].pontoFlutuante));
 				}
-#line 1457 "y.tab.c"
+#line 1502 "y.tab.c"
     break;
 
 
-#line 1461 "y.tab.c"
+#line 1506 "y.tab.c"
 
       default: break;
     }
@@ -1650,7 +1695,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 158 "sintatico.y"
+#line 209 "sintatico.y"
 
 
 void emitRO(char *op, int r, int s, int t, char *c){ 
@@ -1661,6 +1706,10 @@ void emitRM( char * op, int r, int d, int s, char *c){
 	fprintf(yyout,"%3d:  %5s  %d,%d(%d) \n",emitLoc++,op,r,d,s);
 }
 
+void emitRR(char *op, int r, int s,int t, char *c){
+	fprintf(yyout,"%3d: %5s %d,%d,%d \n", emitLoc++, op,r,s,t);
+}
+
 void yyerror(char *s){
 	printf ("Problema com a analise sintatica!\n");
 	printf ("Linha: %d\n", yylineno);
@@ -1669,6 +1718,7 @@ void yyerror(char *s){
 
 int main(int argc, char** argv){
 	//yydebug = 1;
+	printf("\n");
 	if(argc > 0){
 		yyin = fopen(argv[1],"rt");
 	}else{
@@ -1683,6 +1733,7 @@ int main(int argc, char** argv){
 	 
 	emitRM("LD",mp,0,ac,"load maxaddress from location 0");
 	emitRM("ST",ac,0,ac,"clear location 0");
+	
 	yyparse();
 
 	print_lista();
