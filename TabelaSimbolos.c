@@ -18,10 +18,12 @@ TS* criar_no(){
 TS* inserir(char* nome, char* tipo, int mem_loc){
     TS *novo_no = criar_no();
     novo_no->tipo = tipo;
-    novo_no->nome = nome;
+
+    novo_no->nome = (char*) malloc(sizeof(strlen(nome)));
+    strcpy(novo_no->nome, nome);
+
     novo_no->usado = 0;
     novo_no->mem_loc = mem_loc;
-
     novo_no->prox = head;
     head = novo_no;
 
@@ -33,14 +35,15 @@ TS* procurar_no(char* nome){
     aux = head;
     while(aux != NULL && (strcmp(aux->nome, nome) != 0)){
         // printf("%s != %s\n" , aux->nome, nome);
+        // printf("%d\n", strcmp(aux->nome, nome));
         aux = aux->prox;
     }
 
-    if (aux == NULL){
-        // printf("Variavel nao encontrada\n");
-    }else{
-        // printf("Varivael encontrada\n");    
-    }
+    // if (aux == NULL){
+    //     printf("Variavel %s, nao encontrada\n", nome);
+    // }else{
+    //     printf("Varivael %s, encontrada\n", nome);
+    // }
     return aux;
 }
 
@@ -60,9 +63,6 @@ void print_lista(void){
 void gera_warnings(){
   TS* aux = criar_no();
   aux = head;
-  if(head == NULL){
-    printf("Nulo\n");
-  }
   while(aux != NULL){
     if(aux->usado == 0){
       printf("WARNING!!! Variavel declarada mas nao utilizada: %s\n", aux->nome);
@@ -73,7 +73,6 @@ void gera_warnings(){
 
 void GetName(char* s,char* name){
     int i, size = strlen(s);
-
     for(i = 0;s[i] != ' ' && s[i] != ';' && s[i] != '\n' && i < size;i++){
 		name[i] = s[i];
 	}
