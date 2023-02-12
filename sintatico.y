@@ -22,7 +22,7 @@
 	int yylex(void);
 
 	void emitRO(char *op, int r, int s, int t, char *c);
-	void emitRM( char *op, int r, int d, int s, char *c);
+	void emitRM(char *op, int r, int d, int s, char *c);
 	void emitRR(char *op, int r, int s, int t, char *c);
 %}
 
@@ -78,13 +78,14 @@ cmd_associacao: IDENTIFICADOR DECLARACAO exp {
 									if(aux == NULL) {
 										aux = inserir(variavel, "inteiro", locmem++);	
 									}
-									if($<var>3 == "const")
-										emitRM("ST", ac, 0, aux->mem_loc,"store exp in mem(0+aux->mem_loc)");
+									if(!strcmp($<var>3,"const")){
+										emitRM("ST", ac, aux->mem_loc, 5,"store exp in mem(0+aux->mem_loc)");
+									}
 									else{
 										TS* aux1 = criar_no();
 										aux1 = procurar_no($<var>3);
 										if(aux1 != NULL)
-											emitRM("ST", aux1->mem_loc, 0,aux->mem_loc,"store aux1 value in mem(0+aux->mem_loc)");
+											emitRM("ST", aux1->mem_loc,aux->mem_loc,5,"store aux1 value in mem(0+ reg(aux->mem_loc))");
 										else{
 											ERRO++;
 											print_erro(1);
@@ -100,7 +101,7 @@ cmd_escrever: ESCREVER exp{
 			TS* aux = criar_no();
 			aux = procurar_no($<var>2);
 			if(aux != NULL){
-				emitRO("OUT", aux->mem_loc,0,0,"write aux->mem_loc");
+				emitRO("OUT", ac,0,0,"write aux->mem_loc (ac)");
 			}
 			else{
 				ERRO++;
@@ -111,9 +112,12 @@ cmd_escrever: ESCREVER exp{
 ;
 
 cmd_ler: LER IDENTIFICADOR{
+	emitRO("IN",ac,0,0,"read");
 	char nome[20];
 	GetName($2,nome);
-	inserir(nome, "inteiro", locmem++);
+	inserir(nome, "inteiro", locmem);
+	emitRM("ST",ac,locmem,5,"read store");
+	locmem++;
 }
 ;
 
@@ -178,18 +182,19 @@ termo:  termo MULT fator	{
 
 fator: '(' exp ')' 																							{;} 
 			| INTEIRO	{
-				emitRM("LDC",ac,$1,0,"load const");
-				$<var>$ = "const";
+					emitRM("LDC",ac,$1,0,"load const");
+					$<var>$ = "const";
 				}
 			| IDENTIFICADOR {
 					TS* aux = criar_no();
 					aux = procurar_no($1);
 					if(aux != NULL){
 						aux->usado = 1;
-						emitRM("ST", ac, aux->mem_loc,5,"store contents of aux->mem_loc in ac");
+						emitRM("LD", ac, aux->mem_loc,5,"load contents of aux->mem_loc in ac");
 					}
 					else{
-						ERRO++;
+						incrementaERRO();
+						printf("%s - ", $1);
 						print_erro(1);
 					}
 					char nome[20];
@@ -222,7 +227,8 @@ void yyerror(char *s){
 }
 
 int main(int argc, char** argv){
-	yydebug = 1;
+	//yydebug = 1;
+	printf("\n");
 	if(argc > 0){
 		yyin = fopen(argv[1],"rt");
 	}else{
