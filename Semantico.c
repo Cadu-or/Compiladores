@@ -2,7 +2,7 @@
 
 void verifica_semantico(){
   if(ERRO){
-    printf("\n Erro Semantico");
+    printf("\n Erro Semantico\n");
   } else {
     gera_warnings();
   }
@@ -26,7 +26,10 @@ void verifica_semantico(){
 void print_erro(int error){
   switch (error){
   case 1:
-    printf("Variavel utilizada mas nunca declarada.");
+    printf("Variavel utilizada mas nunca declarada.\n");
+    break;
+  case 2:
+    printf("Divisao por 0.\n");
     break;
   default:
     break;

@@ -10,7 +10,8 @@ typedef struct TabelaSimbolo{
     char* nome; // nome
     char* tipo; // tipo
     int usado; // sim ou nao
-    int valor; // valor armazendo pela variavel
+
+    int mem_loc; // endereco
 
     struct TabelaSimbolo *prox; // ponteiro
 }TS;
@@ -19,7 +20,7 @@ static TS* head;
 
 TS* criar_no(void);
 
-void inserir(char* nome, char* tipo, int valor);
+TS* inserir(char* nome, char* tipo, int valor);
 
 TS* procurar_no(char* nome);
 
@@ -28,5 +29,7 @@ void print_lista();
 void clear_lista(void);
 
 void gera_warnings();
+
+void GetName(char *s, char *name);
 
 #endif
