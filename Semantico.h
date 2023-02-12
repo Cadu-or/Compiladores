@@ -9,6 +9,8 @@ void verifica_semantico();
 
 void gera_warnings();
 
+void incrementaERRO();
+
 void print_erro(int erro);
 
 #endif
