@@ -1,3 +1,4 @@
 # Arquivos executavais
 *.exe
 *.out
+*.h.gch
