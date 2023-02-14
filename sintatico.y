@@ -5,6 +5,7 @@
 
 	#define YYDEBUG 1
 	#define ac 0
+	#define gp 5
 	#define mp 6
 	extern FILE *yyin;
 	extern FILE *yyout;
@@ -72,20 +73,19 @@ cmd_associacao: IDENTIFICADOR DECLARACAO exp {
 									// printf("variavel: %s\n",variavel);
 									variavel = (char*) malloc(20 * sizeof(char));
 									GetName($1,variavel);
-									printf("%s\n",variavel);
 									TS* aux = criar_no();
 									aux = procurar_no(variavel);
 									if(aux == NULL) {
 										aux = inserir(variavel, "inteiro", locmem++);	
 									}
-									if(!strcmp($<var>3,"const")){
-										emitRM("ST", ac, aux->mem_loc, 5,"store exp in mem(0+aux->mem_loc)");
+									if(!strcmp($<var>3,"CONST")){
+										emitRM("ST", ac, aux->mem_loc, gp,"store exp in mem(0+aux->mem_loc)");
 									}
 									else{
 										TS* aux1 = criar_no();
 										aux1 = procurar_no($<var>3);
 										if(aux1 != NULL)
-											emitRM("ST", aux1->mem_loc,aux->mem_loc,5,"store aux1 value in mem(0+ reg(aux->mem_loc))");
+											emitRM("ST", aux1->mem_loc,aux->mem_loc,gp,"store aux1 value in mem(0+ reg(aux->mem_loc))");
 										else{
 											ERRO++;
 											print_erro(1);
@@ -95,12 +95,13 @@ cmd_associacao: IDENTIFICADOR DECLARACAO exp {
 ;
 
 cmd_escrever: ESCREVER exp{
-		if(!strcmp($<var>2,"const"))
+		if(!strcmp($<var>2,"CONST"))
 			emitRO("OUT",ac,0,0,"write ac");
 		else{
 			TS* aux = criar_no();
 			aux = procurar_no($<var>2);
 			if(aux != NULL){
+				emitRM("LD",ac,aux->mem_loc,gp,"store mem(aux->mem_loc) in ac");
 				emitRO("OUT", ac,0,0,"write aux->mem_loc (ac)");
 			}
 			else{
@@ -115,9 +116,12 @@ cmd_ler: LER IDENTIFICADOR{
 	emitRO("IN",ac,0,0,"read");
 	char nome[20];
 	GetName($2,nome);
-	inserir(nome, "inteiro", locmem);
-	emitRM("ST",ac,locmem,5,"read store");
-	locmem++;
+	TS* aux = procurar_no(nome);
+	
+	if(aux == NULL)
+	 aux = inserir(nome, "inteiro", locmem++);
+	
+	emitRM("ST",ac,aux->mem_loc,gp,"store value that was read");
 }
 ;
 
@@ -138,23 +142,32 @@ exp:	exp_simples	IGUAL exp_simples															{;}
 exp_simples: 	exp_simples ADC termo {
 								TS* aux = criar_no(), *aux1 = criar_no();
 
-								if(!strcmp($<var>1,"const") && !strcmp($<var>3,"const")){
+								if(!strcmp($<var>1,"CONST") && !strcmp($<var>3,"CONST")){
 									//emitRR("ADD", ac, $<inteiro>1,$<inteiro>3, "r = s + t");
 								}
 
-								else if(strcmp($<var>1,"const") && !strcmp($<var>3,"const")){
-									if((aux = procurar_no($<var>1)) != NULL)
-										emitRR("ADD", ac, aux->mem_loc, ac, "r = s + t");
-								}
-								
-								else if(!strcmp($<var>1,"const") && strcmp($<var>3,"const")){
-									if((aux = procurar_no($<var>3)) != NULL)
-										emitRR("ADD", ac, ac,$<inteiro>3, "r = s + t");
+								else if(strcmp($<var>1,"CONST") && strcmp($<var>3,"CONST")){
+									if((aux = procurar_no($<var>1)) != NULL && (aux1 = procurar_no($<var>3)) != NULL){
+
+										 
+										// aux e aux1 sao iguais!  como assim??????????
+
+
+										emitRM("LD", 0, aux->mem_loc, gp, "reg[0] = mem(aux->mem_loc)");
+										emitRM("LD", 1, aux1->mem_loc, gp, "reg[1] = mem(aux1->mem_loc)");
+										emitRR("ADD", ac, 0,1, "r = s + t");
+									}
 								}
 
-								else if(strcmp($<var>1,"const") && strcmp($<var>3,"const")){
-									if((aux = procurar_no($<var>1)) != NULL && (aux1 = procurar_no($<var>3)) != NULL)
-										emitRR("ADD", ac, aux->mem_loc,aux1->mem_loc, "r = s + t");
+								else{
+									if((aux = procurar_no($<var>1)) != NULL){
+										emitRM("LD", 1, aux->mem_loc, gp,"load contents os aux->mem_loc to ac");
+										emitRR("ADD", ac, 1, ac, "r = s + t");
+									}
+									else if((aux = procurar_no($<var>3)) != NULL){
+										emitRM("LD", 1, aux->mem_loc, gp,"load contents os aux->mem_loc to ac");
+										emitRR("ADD", ac, 1, ac, "r = s + t");
+									}
 								}
 							}
 						| exp_simples SUB termo	{
@@ -183,18 +196,16 @@ termo:  termo MULT fator	{
 fator: '(' exp ')' 																							{;} 
 			| INTEIRO	{
 					emitRM("LDC",ac,$1,0,"load const");
-					$<var>$ = "const";
+					$<var>$ = "CONST";
 				}
 			| IDENTIFICADOR {
 					TS* aux = criar_no();
 					aux = procurar_no($1);
-					if(aux != NULL){
+					if(aux != NULL)
 						aux->usado = 1;
-						emitRM("LD", ac, aux->mem_loc,5,"load contents of aux->mem_loc in ac");
-					}
+					
 					else{
 						incrementaERRO();
-						printf("%s - ", $1);
 						print_erro(1);
 					}
 					char nome[20];
